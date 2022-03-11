@@ -7,3 +7,4 @@ webtest<3
 git+git://github.com/ubragg/protorpc.git@b715b9d3e1ceb817541aa41a03e7c0f386b16d7c#egg=protorpc
 protobuf>=3.0.0b3
 PyYAML==3.12
+rsa<4
