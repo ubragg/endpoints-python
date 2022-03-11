@@ -4,6 +4,7 @@ pytest>=2.8.3
 pytest-cov>=1.8.1
 pytest-timeout>=1.0.0
 webtest>=2.0.23,<3.0
-git+git://github.com/inklesspen/protorpc.git@endpoints-dependency#egg=protorpc-0.12.0a0
+git+git://github.com/ubragg/protorpc.git@b715b9d3e1ceb817541aa41a03e7c0f386b16d7c#egg=protorpc
 protobuf>=3.0.0b3
 PyYAML==3.12
+rsa<4
