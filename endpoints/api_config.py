@@ -35,6 +35,10 @@ the API is returned.
 # pylint: disable=g-statement-before-imports,g-import-not-at-top
 from __future__ import absolute_import
 
+from builtins import zip
+from builtins import range
+from past.builtins import basestring
+from builtins import object
 import json
 import logging
 import re
@@ -109,8 +113,8 @@ def _Enum(docstring, *names):
   Returns:
     A class that contains enum names as attributes.
   """
-  enums = dict(zip(names, range(len(names))))
-  reverse = dict((value, key) for key, value in enums.iteritems())
+  enums = dict(list(zip(names, list(range(len(names))))))
+  reverse = dict((value, key) for key, value in enums.items())
   enums['reverse_mapping'] = reverse
   enums['__doc__'] = docstring
   return type('Enum', (object,), enums)
@@ -603,7 +607,7 @@ class _ApiDecorator(object):
 
       _CheckType(issuers, dict, 'issuers')
       if issuers:
-        for issuer_name, issuer_value in issuers.items():
+        for issuer_name, issuer_value in list(issuers.items()):
           _CheckType(issuer_name, basestring, 'issuer %s' % issuer_name)
           _CheckType(issuer_value, Issuer, 'issuer value for %s' % issuer_name)
 
@@ -1662,7 +1666,7 @@ class ApiConfigGenerator(object):
     """
     if isinstance(final_subfield, messages.EnumField):
       enum_descriptor = {}
-      for enum_value in final_subfield.type.to_dict().keys():
+      for enum_value in list(final_subfield.type.to_dict().keys()):
         enum_descriptor[enum_value] = {'backendValue': enum_value}
       return enum_descriptor
 
@@ -1816,7 +1820,7 @@ class ApiConfigGenerator(object):
     param_order = []
 
     # Make sure all path parameters are covered.
-    for field_name, matched_path_parameters in path_parameter_dict.iteritems():
+    for field_name, matched_path_parameters in path_parameter_dict.items():
       field = message_type.field_by_name(field_name)
       self.__validate_path_parameters(field, matched_path_parameters)
 
@@ -1971,7 +1975,7 @@ class ApiConfigGenerator(object):
 
     for service in services:
       protorpc_methods = service.all_remote_methods()
-      for protorpc_method_name in protorpc_methods.iterkeys():
+      for protorpc_method_name in protorpc_methods.keys():
         rosy_method = '%s.%s' % (service.__name__, protorpc_method_name)
         method_id = self.__id_from_name[rosy_method]
 
@@ -2140,7 +2144,7 @@ class ApiConfigGenerator(object):
 
     for service in services:
       remote_methods = service.all_remote_methods()
-      for protorpc_meth_name, protorpc_meth_info in remote_methods.iteritems():
+      for protorpc_meth_name, protorpc_meth_info in remote_methods.items():
         method_info = getattr(protorpc_meth_info, 'method_info', None)
         # Skip methods that are not decorated with @method
         if method_info is None:

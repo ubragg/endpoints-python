@@ -20,16 +20,20 @@ Classes:
 
 # pylint: disable=g-bad-name
 
+from future import standard_library
+standard_library.install_aliases()
+from builtins import str
+from builtins import object
 import __future__
 
 import json
 import os
-import StringIO
+import io
 import types
 
 
 def SortListEntries(d):
-  for k, v in d.iteritems():
+  for k, v in d.items():
     if isinstance(v, dict):
       SortListEntries(v)
     elif isinstance(v, list):
@@ -217,6 +221,6 @@ def create_fake_environ(protocol, server, port=None, path=None,
       'SERVER_NAME': server,
       'SERVER_PORT': str(port),
       'PATH_INFO': path,
-      'wsgi.input': StringIO.StringIO(body) if body else StringIO.StringIO(),
+      'wsgi.input': io.StringIO(body) if body else io.StringIO(),
       'QUERY_STRING': query_string,
   }

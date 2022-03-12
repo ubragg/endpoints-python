@@ -21,10 +21,11 @@ up import paths properly before we can import that module.
 See the docstring for endpoints._endpointscfg_impl for more
 information about this script's capabilities.
 """
+from __future__ import absolute_import
 
 import sys
 
-import _endpointscfg_setup  # pylint: disable=unused-import
+from . import _endpointscfg_setup  # pylint: disable=unused-import
 from endpoints._endpointscfg_impl import main
 
 if __name__ == '__main__':

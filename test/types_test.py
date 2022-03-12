@@ -13,6 +13,7 @@
 # limitations under the License.
 
 """Tests for types."""
+from __future__ import absolute_import
 
 import base64
 import json
@@ -21,7 +22,7 @@ import string
 import time
 import unittest
 
-import test_util
+from . import test_util
 from endpoints import api_config
 from endpoints import message_types
 from endpoints import messages

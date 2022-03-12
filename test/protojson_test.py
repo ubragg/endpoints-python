@@ -13,11 +13,12 @@
 # limitations under the License.
 
 """Tests for Endpoints-specific ProtoJson class."""
+from __future__ import absolute_import
 
 import json
 import unittest
 
-import test_util
+from . import test_util
 from endpoints import messages
 from endpoints import protojson
 

@@ -4,7 +4,7 @@ pytest<4.6
 pytest-cov<2.10
 pytest-timeout<2
 webtest<3
-git+git://github.com/ubragg/protorpc.git@b715b9d3e1ceb817541aa41a03e7c0f386b16d7c#egg=protorpc-0.12.0a
+git+git://github.com/ubragg/protorpc.git@b715b9d3e1ceb817541aa41a03e7c0f386b16d7c#egg=protorpc
 protobuf>3,<3.18
 PyYAML==3.12
 rsa<4

@@ -13,10 +13,13 @@
 # limitations under the License.
 
 """Test various discovery docs"""
+from __future__ import print_function
 
+from future import standard_library
+standard_library.install_aliases()
 import json
 import os.path
-import urllib
+import urllib.request, urllib.parse, urllib.error
 
 import endpoints
 import pytest
@@ -45,7 +48,7 @@ def load_expected_document(filename):
         with open(test_file) as f:
             return json.loads(f.read())
     except IOError as e:
-        print 'Could not find expected output file ' + test_file
+        print('Could not find expected output file ' + test_file)
         raise e
 
 

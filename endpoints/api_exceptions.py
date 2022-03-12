@@ -16,7 +16,9 @@
 
 from __future__ import absolute_import
 
-import httplib
+from future import standard_library
+standard_library.install_aliases()
+import http.client
 
 from . import remote
 
@@ -26,52 +28,52 @@ class ServiceException(remote.ApplicationError):
 
   def __init__(self, message=None):
     super(ServiceException, self).__init__(message,
-                                           httplib.responses[self.http_status])
+                                           http.client.responses[self.http_status])
 
 
 class BadRequestException(ServiceException):
   """Bad request exception that is mapped to a 400 response."""
-  http_status = httplib.BAD_REQUEST
+  http_status = http.client.BAD_REQUEST
 
 
 class UnauthorizedException(ServiceException):
   """Unauthorized exception that is mapped to a 401 response."""
-  http_status = httplib.UNAUTHORIZED
+  http_status = http.client.UNAUTHORIZED
 
 
 class ForbiddenException(ServiceException):
   """Forbidden exception that is mapped to a 403 response."""
-  http_status = httplib.FORBIDDEN
+  http_status = http.client.FORBIDDEN
 
 
 class NotFoundException(ServiceException):
   """Not found exception that is mapped to a 404 response."""
-  http_status = httplib.NOT_FOUND
+  http_status = http.client.NOT_FOUND
 
 
 class ConflictException(ServiceException):
   """Conflict exception that is mapped to a 409 response."""
-  http_status = httplib.CONFLICT
+  http_status = http.client.CONFLICT
 
 
 class GoneException(ServiceException):
   """Resource Gone exception that is mapped to a 410 response."""
-  http_status = httplib.GONE
+  http_status = http.client.GONE
 
 
 class PreconditionFailedException(ServiceException):
   """Precondition Failed exception that is mapped to a 412 response."""
-  http_status = httplib.PRECONDITION_FAILED
+  http_status = http.client.PRECONDITION_FAILED
 
 
 class RequestEntityTooLargeException(ServiceException):
   """Request entity too large exception that is mapped to a 413 response."""
-  http_status = httplib.REQUEST_ENTITY_TOO_LARGE
+  http_status = http.client.REQUEST_ENTITY_TOO_LARGE
 
 
 class InternalServerErrorException(ServiceException):
   """Internal server exception that is mapped to a 500 response."""
-  http_status = httplib.INTERNAL_SERVER_ERROR
+  http_status = http.client.INTERNAL_SERVER_ERROR
 
 
 class ApiConfigurationError(Exception):

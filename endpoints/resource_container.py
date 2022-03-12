@@ -15,6 +15,7 @@
 """Module for a class that contains a request body resource and parameters."""
 from __future__ import absolute_import
 
+from builtins import object
 from . import message_types
 from . import messages
 

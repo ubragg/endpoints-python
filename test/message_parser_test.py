@@ -13,12 +13,13 @@
 # limitations under the License.
 
 """Tests for message_parser."""
+from __future__ import absolute_import
 
 import difflib
 import json
 import unittest
 
-import test_util
+from . import test_util
 from endpoints import message_parser
 from endpoints import message_types
 from endpoints import messages

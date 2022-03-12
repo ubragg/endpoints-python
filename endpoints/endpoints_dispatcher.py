@@ -25,12 +25,16 @@ configuration has changed.
 # pylint: disable=g-bad-name
 from __future__ import absolute_import
 
-import cStringIO
-import httplib
+from future import standard_library
+standard_library.install_aliases()
+from builtins import str
+from builtins import object
+import io
+import http.client
 import json
 import logging
 import re
-import urlparse
+import urllib.parse
 import wsgiref
 
 import pkg_resources
@@ -288,10 +292,10 @@ class EndpointsDispatcherMiddleware(object):
       An environ object with all the information necessary for the backend to
       process the request.
     """
-    if isinstance(body, unicode):
+    if isinstance(body, str):
       body = body.encode('ascii')
 
-    url = urlparse.urlsplit(relative_url)
+    url = urllib.parse.urlsplit(relative_url)
     if port != 80:
       host = '%s:%s' % (host, port)
     else:
@@ -306,10 +310,10 @@ class EndpointsDispatcherMiddleware(object):
                'SERVER_PROTOCOL': 'HTTP/1.1',
                'wsgi.version': (1, 0),
                'wsgi.url_scheme': 'http',
-               'wsgi.errors': cStringIO.StringIO(),
+               'wsgi.errors': io.StringIO(),
                'wsgi.multithread': True,
                'wsgi.multiprocess': True,
-               'wsgi.input': cStringIO.StringIO(body)}
+               'wsgi.input': io.StringIO(body)}
     util.put_headers_in_environ(headers, environ)
     environ['HTTP_HOST'] = host
     return environ
@@ -348,7 +352,7 @@ class EndpointsDispatcherMiddleware(object):
     url = transformed_request.base_path + transformed_request.path
     transformed_request.headers['Content-Type'] = 'application/json'
     transformed_environ = self.prepare_backend_environ(
-        orig_request.server, 'POST', url, transformed_request.headers.items(),
+        orig_request.server, 'POST', url, list(transformed_request.headers.items()),
         transformed_request.body, transformed_request.source_ip,
         orig_request.port)
 
@@ -549,7 +553,7 @@ class EndpointsDispatcherMiddleware(object):
         path and query parameters in a request.
       source: A dictionary parsed from the body of the request.
     """
-    for key, value in source.iteritems():
+    for key, value in source.items():
       destination_value = destination.get(key)
       if isinstance(value, dict) and isinstance(destination_value, dict):
         self._update_from_body(destination_value, value)
@@ -601,7 +605,7 @@ class EndpointsDispatcherMiddleware(object):
     body_json = {}
 
     # Handle parameters from the URL path.
-    for key, value in params.iteritems():
+    for key, value in params.items():
       # Values need to be in a list to interact with query parameter values
       # and to account for case of repeated parameters
       body_json[key] = [value]
@@ -609,7 +613,7 @@ class EndpointsDispatcherMiddleware(object):
     # Add in parameters from the query string.
     if request.parameters:
       # For repeated elements, query and path work together
-      for key, value in request.parameters.iteritems():
+      for key, value in request.parameters.items():
         if key in body_json:
           body_json[key] = value + body_json[key]
         else:
@@ -619,7 +623,7 @@ class EndpointsDispatcherMiddleware(object):
     # parameters to nested parameters.  We don't use iteritems since we may
     # modify body_json within the loop.  For instance, 'a.b' is not a valid key
     # and would be replaced with 'a'.
-    for key, value in body_json.items():
+    for key, value in list(body_json.items()):
       current_parameter = method_parameters.get(key, {})
       repeated = current_parameter.get('repeated', False)
 
@@ -711,7 +715,7 @@ class EndpointsDispatcherMiddleware(object):
     body = error.rest_error()
 
     response_status = '%d %s' % (status_code,
-                                 httplib.responses.get(status_code,
+                                 http.client.responses.get(status_code,
                                                        'Unknown Error'))
     cors_handler = self._create_cors_handler(orig_request)
     return util.send_wsgi_response(response_status, headers, body,

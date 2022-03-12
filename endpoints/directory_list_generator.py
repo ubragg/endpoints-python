@@ -16,10 +16,13 @@
 
 from __future__ import absolute_import
 
+from future import standard_library
+standard_library.install_aliases()
+from builtins import object
 import collections
 import json
 import re
-import urlparse
+import urllib.parse
 
 from . import util
 
@@ -86,7 +89,7 @@ class DirectoryListGenerator(object):
     descriptor['version'] = version
     descriptor['discoveryLink'] = '.{0}'.format(relative_path)
 
-    root_url_port = urlparse.urlparse(root_url).port
+    root_url_port = urllib.parse.urlparse(root_url).port
 
     original_path = self.__request.reconstruct_full_url(
         port_override=root_url_port)

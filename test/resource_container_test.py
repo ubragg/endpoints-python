@@ -13,11 +13,12 @@
 # limitations under the License.
 
 """Tests for endpoints.resource_container."""
+from __future__ import absolute_import
 
 import json
 import unittest
 
-import test_util
+from . import test_util
 from endpoints import api_config
 from endpoints import message_types
 from endpoints import messages

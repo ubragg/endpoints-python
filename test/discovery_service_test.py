@@ -13,11 +13,13 @@
 # limitations under the License.
 
 """Tests for discovery_service."""
+from __future__ import absolute_import
 
+from builtins import object
 import os
 import unittest
 
-import test_util
+from . import test_util
 import webtest
 from endpoints import api_config
 from endpoints import api_config_manager
@@ -220,7 +222,7 @@ class DiscoveryServiceVersionTest(unittest.TestCase):
       resp = self.app.get(
           'http://localhost/_ah/api/discovery/v1/apis/iata/{}/rest'.format(version))
       self.assertEqual(resp.json['version'], version)
-      self.assertItemsEqual(resp.json['methods'].keys(), [u'list_airports'])
+      self.assertItemsEqual(list(resp.json['methods'].keys()), [u'list_airports'])
 
 if __name__ == '__main__':
   unittest.main()

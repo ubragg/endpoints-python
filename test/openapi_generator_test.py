@@ -13,12 +13,13 @@
 # limitations under the License.
 
 """Tests for endpoints.openapi_generator."""
+from __future__ import absolute_import
 
 import json
 import unittest
 
 import pytest
-import test_util
+from . import test_util
 from endpoints import api_config
 from endpoints import api_exceptions
 from endpoints import message_types

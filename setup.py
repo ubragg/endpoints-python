@@ -18,9 +18,9 @@
 from setuptools import setup, find_packages
 
 install_requires = [
-    'attrs==17.4.0',
+    'attrs>=17.4.0',
     'google-endpoints-api-management>=1.10.0',
-    'semver==2.7.7',
+    'semver>=2.7.7',
     'setuptools>=36.2.5',
 ]
 
@@ -41,8 +41,8 @@ setup(
         'Intended Audience :: Developers',
         'License :: OSI Approved :: Apache Software License',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: Implementation :: CPython',
     ],
     scripts=['endpoints/endpointscfg.py'],

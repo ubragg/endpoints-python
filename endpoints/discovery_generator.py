@@ -16,6 +16,8 @@
 
 from __future__ import absolute_import
 
+from builtins import str
+from builtins import object
 import collections
 import json
 import logging
@@ -343,7 +345,7 @@ class DiscoveryGenerator(object):
     """
     if isinstance(param, messages.EnumField):
       return [enum_entry[0] for enum_entry in sorted(
-          param.type.to_dict().items(), key=lambda v: v[1])]
+          list(param.type.to_dict().items()), key=lambda v: v[1])]
 
   def __parameter_descriptor(self, param):
     """Creates descriptor for a parameter.
@@ -500,7 +502,7 @@ class DiscoveryGenerator(object):
     params = {}
 
     # Make sure all path parameters are covered.
-    for field_name, matched_path_parameters in path_parameter_dict.iteritems():
+    for field_name, matched_path_parameters in path_parameter_dict.items():
       field = message_type.field_by_name(field_name)
       self.__validate_path_parameters(field, matched_path_parameters)
 
@@ -552,8 +554,8 @@ class DiscoveryGenerator(object):
     """
     # Filter out any keys that aren't 'properties', 'type', or 'id'
     result = {}
-    for schema_key, schema_value in self.__parser.schemas().iteritems():
-      field_keys = schema_value.keys()
+    for schema_key, schema_value in self.__parser.schemas().items():
+      field_keys = list(schema_value.keys())
       key_result = {}
 
       # Some special processing for the properties value
@@ -561,7 +563,7 @@ class DiscoveryGenerator(object):
         key_result['properties'] = schema_value['properties'].copy()
         # Add in enumDescriptions for any enum properties and strip out
         # the required tag for consistency with Java framework
-        for prop_key, prop_value in schema_value['properties'].iteritems():
+        for prop_key, prop_value in schema_value['properties'].items():
           if 'enum' in prop_value:
             num_enums = len(prop_value['enum'])
             key_result['properties'][prop_key]['enumDescriptions'] = (
@@ -582,8 +584,8 @@ class DiscoveryGenerator(object):
         result[schema_key] = key_result
 
     # Add 'type': 'object' to all object properties
-    for schema_value in result.itervalues():
-      for field_value in schema_value.itervalues():
+    for schema_value in result.values():
+      for field_value in schema_value.values():
         if isinstance(field_value, dict):
           if '$ref' in field_value:
             field_value['type'] = 'object'
@@ -752,7 +754,7 @@ class DiscoveryGenerator(object):
             service, method_info, protorpc_meth_info)
 
     # Process any sub-resources
-    for sub_resource, sub_resource_methods in sub_resource_index.items():
+    for sub_resource, sub_resource_methods in list(sub_resource_index.items()):
       sub_resource_name = sub_resource.split('.')[-1]
       sub_resource_map[sub_resource_name] = self.__resource_descriptor(
           sub_resource, sub_resource_methods)
@@ -908,7 +910,7 @@ class DiscoveryGenerator(object):
     for service in services:
       remote_methods = service.all_remote_methods()
 
-      for protorpc_meth_name, protorpc_meth_info in remote_methods.iteritems():
+      for protorpc_meth_name, protorpc_meth_info in remote_methods.items():
         method_info = getattr(protorpc_meth_info, 'method_info', None)
         # Skip methods that are not decorated with @method
         if method_info is None:
@@ -946,7 +948,7 @@ class DiscoveryGenerator(object):
               service, method_info, protorpc_meth_info)
 
     # Do another pass for methods attached to resources
-    for resource, resource_methods in resource_index.items():
+    for resource, resource_methods in list(resource_index.items()):
       resource_map[resource] = self.__resource_descriptor(resource,
           resource_methods)
 

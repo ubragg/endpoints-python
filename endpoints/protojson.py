@@ -15,6 +15,7 @@
 """Endpoints-specific implementation of ProtoRPC's ProtoJson class."""
 from __future__ import absolute_import
 
+from builtins import str
 import base64
 
 from protorpc import protojson
@@ -102,7 +103,7 @@ class EndpointsProtoJson(protojson.ProtoJson):
         # as unicode, and urlsafe_b64decode can only handle bytes.
         padded_value = self.__pad_value(str(value), 4, '=')
         return base64.urlsafe_b64decode(padded_value)
-      except (TypeError, UnicodeEncodeError), err:
+      except (TypeError, UnicodeEncodeError) as err:
         raise messages.DecodeError('Base64 decoding error: %s' % err)
 
     return super(EndpointsProtoJson, self).decode_field(field, value)

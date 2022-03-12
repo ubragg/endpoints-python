@@ -13,12 +13,14 @@
 # limitations under the License.
 
 """Tests for endpoints.directory_list_generator."""
+from __future__ import print_function
+from __future__ import absolute_import
 
 import json
 import os
 import unittest
 
-import test_util
+from . import test_util
 from endpoints import api_config
 from endpoints import api_request
 from endpoints import apiserving
@@ -99,7 +101,7 @@ class DirectoryListGeneratorTest(BaseDirectoryListGeneratorTest):
       raise Exception('Could not process API config response')
 
     configs = []
-    for config in api_server.config_manager.configs.itervalues():
+    for config in api_server.config_manager.configs.values():
       if config != API_CONFIG:
         configs.append(config)
 
@@ -116,7 +118,7 @@ class DirectoryListGeneratorTest(BaseDirectoryListGeneratorTest):
       with open(test_file) as f:
         expected_directory = json.loads(f.read())
     except IOError as e:
-      print 'Could not find expected output file ' + test_file
+      print('Could not find expected output file ' + test_file)
       raise e
 
     test_util.AssertDictEqual(expected_directory, directory, self)
@@ -164,7 +166,7 @@ class DevServerDirectoryListGeneratorTest(BaseDirectoryListGeneratorTest,
       raise Exception('Could not process API config response')
 
     configs = []
-    for config in api_server.config_manager.configs.itervalues():
+    for config in api_server.config_manager.configs.values():
       if config != API_CONFIG:
         configs.append(config)
 
@@ -182,7 +184,7 @@ class DevServerDirectoryListGeneratorTest(BaseDirectoryListGeneratorTest,
       with open(test_file) as f:
         expected_directory = json.loads(f.read())
     except IOError as e:
-      print 'Could not find expected output file ' + test_file
+      print('Could not find expected output file ' + test_file)
       raise e
 
     test_util.AssertDictEqual(expected_directory, directory, self)

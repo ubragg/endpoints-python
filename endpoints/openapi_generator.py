@@ -15,6 +15,7 @@
 """A library for converting service configs to OpenAPI (Swagger) specs."""
 from __future__ import absolute_import
 
+from builtins import object
 import hashlib
 import json
 import logging
@@ -104,7 +105,7 @@ class OpenApiGenerator(object):
     Side Effects:
       Alters prop_dict in-place.
     """
-    for prop_key, prop_value in prop_dict.iteritems():
+    for prop_key, prop_value in prop_dict.items():
       if prop_key == '$ref' and not 'prop_value'.startswith('#'):
         prop_dict[prop_key] = '#/definitions/' + prop_dict[prop_key]
       elif isinstance(prop_value, dict):
@@ -367,7 +368,7 @@ class OpenApiGenerator(object):
     """
     if isinstance(param, messages.EnumField):
       return [enum_entry[0] for enum_entry in sorted(
-          param.type.to_dict().items(), key=lambda v: v[1])]
+          list(param.type.to_dict().items()), key=lambda v: v[1])]
 
   def __body_parameter_descriptor(self, method_id):
     return {
@@ -561,7 +562,7 @@ class OpenApiGenerator(object):
     params_message_type = message_type.parameters_message_class()
 
     # Make sure all path parameters are covered.
-    for field_name, matched_path_parameters in path_parameter_dict.iteritems():
+    for field_name, matched_path_parameters in path_parameter_dict.items():
       field = params_message_type.field_by_name(field_name)
       self.__validate_path_parameters(field, matched_path_parameters)
 
@@ -618,14 +619,14 @@ class OpenApiGenerator(object):
     """
     # Filter out any keys that aren't 'properties' or 'type'
     result = {}
-    for def_key, def_value in self.__parser.schemas().iteritems():
+    for def_key, def_value in self.__parser.schemas().items():
       if 'properties' in def_value or 'type' in def_value:
         key_result = {}
         required_keys = set()
         if 'type' in def_value:
           key_result['type'] = def_value['type']
         if 'properties' in def_value:
-          for prop_key, prop_value in def_value['properties'].items():
+          for prop_key, prop_value in list(def_value['properties'].items()):
             if isinstance(prop_value, dict) and 'required' in prop_value:
               required_keys.add(prop_key)
               del prop_value['required']
@@ -637,8 +638,8 @@ class OpenApiGenerator(object):
 
     # Add 'type': 'object' to all object properties
     # Also, recursively add relative path to all $ref values
-    for def_value in result.itervalues():
-      for prop_value in def_value.itervalues():
+    for def_value in result.values():
+      for prop_value in def_value.values():
         if isinstance(prop_value, dict):
           if '$ref' in prop_value:
             prop_value['type'] = 'object'
@@ -681,7 +682,7 @@ class OpenApiGenerator(object):
     """
     return {
         'metricCosts': {
-            metric: cost for (metric, cost) in metric_costs.items()
+            metric: cost for (metric, cost) in list(metric_costs.items())
         }
     } if metric_costs else None
 
@@ -779,7 +780,7 @@ class OpenApiGenerator(object):
       # security_definitions includes not just the base issuers, but also the
       # hash-appended versions, so we need to filter them out
       security_issuers = set()
-      for definition_key in security_definitions.keys():
+      for definition_key in list(security_definitions.keys()):
         if definition_key == _API_KEY:
           # API key definitions don't count for these purposes
           continue
@@ -797,7 +798,7 @@ class OpenApiGenerator(object):
       audiences = {_DEFAULT_SECURITY_DEFINITION: audiences}
 
     results = []
-    for issuer, issuer_audiences in audiences.items():
+    for issuer, issuer_audiences in list(audiences.items()):
       result_dict = {}
       if issuer not in security_definitions:
         raise TypeError('Missing issuer {}'.format(issuer))
@@ -838,7 +839,7 @@ class OpenApiGenerator(object):
 
     result = {}
 
-    for issuer_key, issuer_value in issuers.items():
+    for issuer_key, issuer_value in list(issuers.items()):
       result[issuer_key] = {
           'authorizationUrl': '',
           'flow': 'implicit',
@@ -920,7 +921,7 @@ class OpenApiGenerator(object):
     for service in services:
       remote_methods = service.all_remote_methods()
 
-      for protorpc_meth_name in sorted(remote_methods.iterkeys()):
+      for protorpc_meth_name in sorted(remote_methods.keys()):
         protorpc_meth_info = remote_methods[protorpc_meth_name]
         method_info = getattr(protorpc_meth_info, 'method_info', None)
         # Skip methods that are not decorated with @method

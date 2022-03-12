@@ -14,7 +14,10 @@
 
 """Tests against fully-constructed apps"""
 
-import urllib
+from future import standard_library
+standard_library.install_aliases()
+from builtins import object
+import urllib.request, urllib.parse, urllib.error
 
 import endpoints
 import pytest
@@ -42,7 +45,7 @@ FILES = {
 }
 
 def _quote_slash(part):
-    return urllib.quote(part, safe='')
+    return urllib.parse.quote(part, safe='')
 
 def _make_app(api_use, method_use):
     @endpoints.api(name='filefetcher', version='1.0.0', use_request_uri=api_use)

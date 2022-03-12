@@ -13,12 +13,14 @@
 # limitations under the License.
 
 """Tests for endpoints.discovery_generator."""
+from __future__ import print_function
+from __future__ import absolute_import
 
 import json
 import os
 import unittest
 
-import test_util
+from . import test_util
 from endpoints import api_config
 from endpoints import api_exceptions
 from endpoints import discovery_generator
@@ -214,7 +216,7 @@ class DiscoveryGeneratorTest(BaseDiscoveryGeneratorTest):
       with open(test_file) as f:
         expected_discovery = json.loads(f.read())
     except IOError as e:
-      print 'Could not find expected output file ' + test_file
+      print('Could not find expected output file ' + test_file)
       raise e
 
     test_util.AssertDictEqual(expected_discovery, api, self)
@@ -240,7 +242,7 @@ class DiscoveryGeneratorTest(BaseDiscoveryGeneratorTest):
       with open(test_file) as f:
         expected_discovery = json.loads(f.read())
     except IOError as e:
-      print 'Could not find expected output file ' + test_file
+      print('Could not find expected output file ' + test_file)
       raise e
 
     test_util.AssertDictEqual(expected_discovery, api, self)
@@ -266,7 +268,7 @@ class DiscoveryGeneratorTest(BaseDiscoveryGeneratorTest):
       with open(test_file) as f:
         expected_discovery = json.loads(f.read())
     except IOError as e:
-      print 'Could not find expected output file ' + test_file
+      print('Could not find expected output file ' + test_file)
       raise e
 
     # Clear the value of the packagePath parameter in the expected results
@@ -299,7 +301,7 @@ class DiscoveryGeneratorTest(BaseDiscoveryGeneratorTest):
       with open(test_file) as f:
         expected_discovery = json.loads(f.read())
     except IOError as e:
-      print 'Could not find expected output file ' + test_file
+      print('Could not find expected output file ' + test_file)
       raise e
 
     test_util.AssertDictEqual(expected_discovery, api, self)
@@ -352,7 +354,7 @@ class DiscoveryMultiClassGeneratorTest(BaseDiscoveryGeneratorTest):
         return Airport(iata=request.iata, name=airports[request.iata])
 
     doc = self.generator.get_discovery_doc([ServicePart1, ServicePart2])
-    self.assertItemsEqual(doc['methods'].keys(), [u'get_airport', u'list_airports'])
+    self.assertItemsEqual(list(doc['methods'].keys()), [u'get_airport', u'list_airports'])
 
   def testMethodCollisionDetection(self):
     '''While multiple classes can be passed to the generator at once,

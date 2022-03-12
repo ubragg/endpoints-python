@@ -20,15 +20,18 @@ Tests:
   ModuleInterfaceTest: Tests interface of module.
   ApiServerTest: Tests core functionality: registry, requests, errors.
 """
+from __future__ import absolute_import
 
-import httplib
+from future import standard_library
+standard_library.install_aliases()
+import http.client
 import json
 import logging
 import unittest
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 
 import mock
-import test_util
+from . import test_util
 import webtest
 from endpoints import api_config
 from endpoints import api_exceptions
@@ -47,11 +50,11 @@ class ExceptionRequest(messages.Message):
 
 
 class Custom405Exception(api_exceptions.ServiceException):
-  http_status = httplib.METHOD_NOT_ALLOWED
+  http_status = http.client.METHOD_NOT_ALLOWED
 
 
 class Custom408Exception(api_exceptions.ServiceException):
-  http_status = httplib.REQUEST_TIMEOUT
+  http_status = http.client.REQUEST_TIMEOUT
 
 
 @api_config.api('aservice', 'v2', hostname='aservice.appspot.com',

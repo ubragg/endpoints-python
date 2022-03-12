@@ -1,3 +1,4 @@
+from __future__ import print_function
 # Copyright 2017 Google Inc. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,8 +13,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from future import standard_library
+standard_library.install_aliases()
+from builtins import object
 import base64
-import cStringIO
+import io
 import importlib
 import os
 import shutil
@@ -70,7 +74,7 @@ def gcloud_driver_module(request):
     else:
         driver_zip_data = base64.b64decode(driver_zip_data)
     extract_path = tempfile.mkdtemp()
-    with zipfile.ZipFile(cStringIO.StringIO(driver_zip_data)) as driver_zip:
+    with zipfile.ZipFile(io.StringIO(driver_zip_data)) as driver_zip:
         driver_zip.extractall(path=extract_path)
     # have to rename the subfolder
     os.rename(os.path.join(extract_path, 'cloudsdk-test-driver-master'), os.path.join(extract_path, 'cloudsdk_test_driver'))
@@ -126,7 +130,7 @@ def apikey_app(gcloud_sdk, integration_project_id):
     os.mkdir(os.path.join(path, 'lib'))
     # Install the checked-out endpoints repo
     subprocess.check_call(['python', '-m', 'pip', 'install', '-t', 'lib', PKGDIR, '--ignore-installed'], cwd=path)
-    print path
+    print(path)
     subprocess.check_call(['python', 'lib/endpoints/endpointscfg.py', 'get_openapi_spec', 'main.IataApi', '--hostname', '{}.appspot.com'.format(integration_project_id)], cwd=path)
     out, err, code = gcloud_sdk.RunGcloud(['endpoints', 'services', 'deploy', os.path.join(path, 'iatav1openapi.json')])
     assert code == 0

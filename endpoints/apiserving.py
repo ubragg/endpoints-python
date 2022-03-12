@@ -60,8 +60,12 @@ compatible errors, it exposes a helper service that describes your services.
 
 from __future__ import absolute_import
 
+from future import standard_library
+standard_library.install_aliases()
+from builtins import str
+from builtins import object
 import cgi
-import httplib
+import http.client
 import json
 import logging
 import os
@@ -99,7 +103,7 @@ class _Remapped405Exception(api_exceptions.ServiceException):
   This is included here for compatibility with the Java implementation.  The
   Google Cloud Endpoints server remaps HTTP 405 to 501.
   """
-  http_status = httplib.METHOD_NOT_ALLOWED
+  http_status = http.client.METHOD_NOT_ALLOWED
 
 
 class _Remapped408Exception(api_exceptions.ServiceException):
@@ -108,10 +112,10 @@ class _Remapped408Exception(api_exceptions.ServiceException):
   This is included here for compatibility with the Java implementation.  The
   Google Cloud Endpoints server remaps HTTP 408 to 503.
   """
-  http_status = httplib.REQUEST_TIMEOUT
+  http_status = http.client.REQUEST_TIMEOUT
 
 
-_ERROR_NAME_MAP = dict((httplib.responses[c.http_status], c) for c in [
+_ERROR_NAME_MAP = dict((http.client.responses[c.http_status], c) for c in [
     api_exceptions.BadRequestException,
     api_exceptions.UnauthorizedException,
     api_exceptions.ForbiddenException,
@@ -221,7 +225,7 @@ class ApiConfigRegistry(object):
 
     # Determine the name of the class that implements this configuration.
     service_classes = set()
-    for method in methods.itervalues():
+    for method in methods.values():
       rosy_method = method.get('rosyMethod')
       if rosy_method and '.' in rosy_method:
         method_class = rosy_method.split('.', 1)[0]
@@ -247,7 +251,7 @@ class ApiConfigRegistry(object):
     if not methods:
       return
 
-    for method_name, method in methods.iteritems():
+    for method_name, method in methods.items():
       self.__api_methods[method_name] = method.get('rosyMethod')
 
   def lookup_api_method(self, api_method_name):
@@ -413,7 +417,7 @@ class _ApiServer(object):
     """
     generator = api_config.ApiConfigGenerator()
     protorpc_services = []
-    for service_factories in api_name_version_map.itervalues():
+    for service_factories in api_name_version_map.values():
       service_classes = [service_factory.service_class
                          for service_factory in service_factories]
       config_dict = generator.get_config_dict(service_classes)
@@ -459,8 +463,8 @@ class _ApiServer(object):
         body: Body of the HTTP request.
     """
     if error_message is None:
-      error_message = httplib.responses[status_code]
-    status = '%d %s' % (status_code, httplib.responses[status_code])
+      error_message = http.client.responses[status_code]
+    status = '%d %s' % (status_code, http.client.responses[status_code])
     message = EndpointsErrorMessage(
         state=EndpointsErrorMessage.State.APPLICATION_ERROR,
         error_message=error_message)

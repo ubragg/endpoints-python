@@ -13,7 +13,10 @@
 # limitations under the License.
 
 """Tests for users_id_token and validate_id_token."""
+from __future__ import absolute_import
 
+from builtins import str
+from builtins import object
 import base64
 import json
 import os
@@ -28,7 +31,7 @@ from google.appengine.api import users
 
 import mock
 import pytest
-import test_util
+from . import test_util
 from endpoints import api_config
 from endpoints import constants
 from endpoints import message_types
@@ -295,7 +298,7 @@ class UsersIdTokenTest(UsersIdTokenTestBase):
       users_id_token._verify_signed_jwt_with_certs(
           token, self._SAMPLE_TIME_NOW, self.cache)
       self.fail('Expected exception.')
-    except users_id_token._AppIdentityError, e:
+    except users_id_token._AppIdentityError as e:
       # Make sure this works without an exception.
       try:
         str(e).decode('utf-8')
@@ -680,7 +683,7 @@ class UsersIdTokenTestWithSimpleApi(UsersIdTokenTestBase):
     # No im_self is present and no api_info can be used, so the method itself
     # has no access to scopes, hence scopes will be null and neither of the
     # token checks will occur
-    users_id_token._maybe_set_current_user_vars(api_instance.method.im_func)
+    users_id_token._maybe_set_current_user_vars(api_instance.method.__func__)
     self.assertNotIn('ENDPOINTS_USE_OAUTH_SCOPE', os.environ)
     self.assertEqual(os.getenv('ENDPOINTS_AUTH_EMAIL'), '')
     self.assertEqual(os.getenv('ENDPOINTS_AUTH_DOMAIN'), '')
@@ -702,7 +705,7 @@ class UsersIdTokenTestWithSimpleApi(UsersIdTokenTestBase):
     # Test that it works using the api info from the API
     os.environ.pop('ENDPOINTS_AUTH_EMAIL')
     os.environ.pop('ENDPOINTS_AUTH_DOMAIN')
-    users_id_token._maybe_set_current_user_vars(api_instance.method.im_func,
+    users_id_token._maybe_set_current_user_vars(api_instance.method.__func__,
                                                 api_info=api_instance.api_info)
     self.assertEqual(os.getenv('ENDPOINTS_AUTH_EMAIL'), 'test@gmail.com')
 

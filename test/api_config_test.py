@@ -13,13 +13,15 @@
 # limitations under the License.
 
 """Tests for endpoints.api_config."""
+from __future__ import absolute_import
 
+from builtins import range
 import itertools
 import json
 import unittest
 
 import mock
-import test_util
+from . import test_util
 from endpoints import api_config
 from endpoints import api_exceptions
 from endpoints import message_types

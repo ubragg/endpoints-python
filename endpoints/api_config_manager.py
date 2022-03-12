@@ -17,11 +17,15 @@
 # pylint: disable=g-bad-name
 from __future__ import absolute_import
 
+from past.builtins import cmp
+from future import standard_library
+standard_library.install_aliases()
+from builtins import object
 import base64
 import logging
 import re
 import threading
-import urllib
+import urllib.request, urllib.parse, urllib.error
 
 from . import discovery_service
 
@@ -66,7 +70,7 @@ class ApiConfigManager(object):
         lookup_key = config.get('name', ''), config.get('version', '')
         self._configs[lookup_key] = config
 
-      for config in self._configs.itervalues():
+      for config in self._configs.values():
         name = config.get('name', '')
         api_version = config.get('api_version', '')
         path_version = config.get('path_version', '')
@@ -147,7 +151,7 @@ class ApiConfigManager(object):
                           method_info2[1].get('httpMethod', ''))
       return method_result
 
-    return sorted(methods.items(), _sorted_methods_comparison)
+    return sorted(list(methods.items()), _sorted_methods_comparison)
 
   @staticmethod
   def _get_path_params(match):
@@ -160,9 +164,9 @@ class ApiConfigManager(object):
       A dictionary containing the variable names converted from base64.
     """
     result = {}
-    for var_name, value in match.groupdict().iteritems():
+    for var_name, value in match.groupdict().items():
       actual_var_name = ApiConfigManager._from_safe_path_param_name(var_name)
-      result[actual_var_name] = urllib.unquote_plus(value)
+      result[actual_var_name] = urllib.parse.unquote_plus(value)
     return result
 
   def lookup_rest_method(self, path, request_uri, http_method):

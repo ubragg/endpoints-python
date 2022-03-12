@@ -17,6 +17,7 @@
 # pylint: disable=g-bad-name
 from __future__ import absolute_import
 
+from builtins import object
 import json
 import logging
 
@@ -181,7 +182,7 @@ class DiscoveryService(object):
     """
     configs = []
     generator = directory_list_generator.DirectoryListGenerator(request)
-    for config in self._config_manager.configs.itervalues():
+    for config in self._config_manager.configs.values():
       if config != self.API_CONFIG:
         configs.append(config)
     directory = generator.pretty_print_config_to_json(configs)

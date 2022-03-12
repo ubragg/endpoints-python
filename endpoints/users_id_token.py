@@ -21,6 +21,9 @@ will be provided elsewhere in the future.
 
 from __future__ import absolute_import
 
+from future import standard_library
+standard_library.install_aliases()
+from past.builtins import basestring
 import base64
 import hmac
 import json
@@ -28,7 +31,7 @@ import logging
 import os
 import re
 import time
-import urllib
+import urllib.request, urllib.parse, urllib.error
 from collections import Container as _Container
 from collections import Iterable as _Iterable
 from collections import Mapping as _Mapping
@@ -179,7 +182,7 @@ def _maybe_set_current_user_vars(method, api_info=None, request=None):
   # from the API.  Specifically check for None, so that methods can override
   # with empty lists.
   try:
-    api_info = api_info or method.im_self.api_info
+    api_info = api_info or method.__self__.api_info
   except AttributeError:
     # The most common case for this is someone passing an unbound method
     # to this function, which most likely only happens in our unit tests.
@@ -228,7 +231,7 @@ def _maybe_set_current_user_vars(method, api_info=None, request=None):
       issuers = _DEFAULT_GOOGLE_ISSUER
     elif 'google_id_token' not in issuers:
       issuers.update(_DEFAULT_GOOGLE_ISSUER)
-    time_now = long(time.time())
+    time_now = int(time.time())
     user = _get_id_token_user(token, issuers, audiences, allowed_client_ids,
                               time_now, memcache)
     if user:
@@ -301,7 +304,7 @@ def _get_id_token_user(token, issuers, audiences, allowed_client_ids, time_now, 
   """
   # Verify that the token is valid before we try to extract anything from it.
   # This verifies the signature and some of the basic info in the token.
-  for issuer_key, issuer in issuers.items():
+  for issuer_key, issuer in list(issuers.items()):
     issuer_cert_uri = convert_jwks_uri(issuer.jwks_uri)
     try:
       parsed_token = _verify_signed_jwt_with_certs(
@@ -425,7 +428,7 @@ def _set_bearer_user_vars_local(token, allowed_client_ids, scopes):
   """
   # Get token info from the tokeninfo endpoint.
   result = urlfetch.fetch(
-      '%s?%s' % (_TOKENINFO_URL, urllib.urlencode({'access_token': token})))
+      '%s?%s' % (_TOKENINFO_URL, urllib.parse.urlencode({'access_token': token})))
   if result.status_code != 200:
     try:
       error_description = json.loads(result.content)['error_description']
@@ -597,7 +600,7 @@ def _b64_to_long(b):
   b = b.encode('ascii')
   b += '=' * ((4 - len(b)) % 4)
   b = base64.b64decode(b)
-  return long(b.encode('hex'), 16)
+  return int(b.encode('hex'), 16)
 
 
 def _verify_signed_jwt_with_certs(
@@ -643,7 +646,7 @@ def _verify_signed_jwt_with_certs(
 
   # pycrypto only deals in integers, so we have to convert the string of bytes
   # into a long.
-  lsignature = long(signature.encode('hex'), 16)
+  lsignature = int(signature.encode('hex'), 16)
 
   # Verify expected header.
   header_body = _urlsafe_b64decode(segments[0])
@@ -693,7 +696,7 @@ def _verify_signed_jwt_with_certs(
       verified = hmac.compare_digest(hexsig, local_hash)
       if verified:
         break
-    except Exception, e:  # pylint: disable=broad-except
+    except Exception as e:  # pylint: disable=broad-except
       # Log the exception for debugging purpose.
       _logger.debug(
           'Signature verification error: %s; continuing with the next cert.', e)
@@ -785,7 +788,7 @@ def get_verified_jwt(
       request=request, allowed_auth_schemes=schemes, allowed_query_keys=keys)
   if token is None:
     return None
-  time_now = long(time.time())
+  time_now = int(time.time())
   for provider in providers:
     parsed_token = _parse_and_verify_jwt(
         token, time_now, (provider['issuer'],), audiences, provider['cert_uri'], cache)
