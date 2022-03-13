@@ -195,7 +195,7 @@ class UsersIdTokenTest(UsersIdTokenTestBase):
     # Modify the issued and expiration times.
     body['iat'] += 60
     body['exp'] += 60
-    encoded_body = base64.urlsafe_b64encode(json.dumps(body))
+    encoded_body = base64.urlsafe_b64encode(json.dumps(body).encode('utf-8')).decode('utf-8')
 
     split_token = self._SAMPLE_TOKEN.split('.')
     token = '.'.join((split_token[0], encoded_body, split_token[2]))
@@ -301,7 +301,7 @@ class UsersIdTokenTest(UsersIdTokenTestBase):
     except users_id_token._AppIdentityError as e:
       # Make sure this works without an exception.
       try:
-        str(e).decode('utf-8')
+        str(e).encode('utf-8').decode('utf-8')
       except UnicodeDecodeError:
         printable = ''.join(c if c in string.printable
                             else '\\x%02x' % ord(c)
@@ -315,7 +315,7 @@ class UsersIdTokenTest(UsersIdTokenTestBase):
   def testErrorStringLoggableBadHeader(self):
     """Check that the Bad Header error is loggable."""
     token_part = 'bad utf-8 \xff'
-    token = '.'.join([base64.urlsafe_b64encode(token_part)] * 3)
+    token = '.'.join([base64.urlsafe_b64encode(token_part.encode('utf-8')).decode('utf-8')] * 3)
     self.CheckErrorLoggable(token)
 
   def testErrorStringLoggableBadBody(self):
@@ -323,7 +323,7 @@ class UsersIdTokenTest(UsersIdTokenTestBase):
     token_body = 'bad utf-8 \xff'
     token_parts = self._SAMPLE_TOKEN.split('.')
     token = '.'.join([token_parts[0],
-                      base64.urlsafe_b64encode(token_body),
+                      base64.urlsafe_b64encode(token_body.encode('utf-8')).decode('utf-8'),
                       token_parts[2]])
     self.CheckErrorLoggable(token)
 

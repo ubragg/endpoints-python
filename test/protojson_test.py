@@ -117,8 +117,8 @@ class EndpointsProtoJsonTest(unittest.TestCase):
   def testBytesInvalidChars(self):
     """Verify that invalid characters are ignored in BytesField encodings."""
     for encoded in ('\x00\x01\x02\x03', '\xff==='):
-      self.assertEqual('', self.__protojson.decode_field(MyMessage.var_bytes,
-                                                         encoded))
+      self.assertEquals('', self.__protojson.decode_field(MyMessage.var_bytes,
+                                                          encoded))
 
 if __name__ == '__main__':
   unittest.main()

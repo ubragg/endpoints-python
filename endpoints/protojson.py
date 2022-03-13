@@ -17,6 +17,7 @@ from __future__ import absolute_import
 
 from builtins import str
 import base64
+import binascii
 
 from protorpc import protojson
 
@@ -101,9 +102,9 @@ class EndpointsProtoJson(protojson.ProtoJson):
       try:
         # Need to call str(value) because ProtoRPC likes to pass values
         # as unicode, and urlsafe_b64decode can only handle bytes.
-        padded_value = self.__pad_value(str(value), 4, '=')
+        padded_value = self.__pad_value(value, 4, '=').encode('utf-8')
         return base64.urlsafe_b64decode(padded_value)
-      except (TypeError, UnicodeEncodeError) as err:
+      except (TypeError, UnicodeEncodeError, binascii.Error) as err:
         raise messages.DecodeError('Base64 decoding error: %s' % err)
 
-    return super(EndpointsProtoJson, self).decode_field(field, value)
+    return super(EndpointsProtoJson, self).decode_field(field, value).decode('utf-8')

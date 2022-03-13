@@ -1071,4 +1071,4 @@ class OpenApiGenerator(object):
 
 
 def hashfunc(string):
-    return hashlib.md5(string).hexdigest()[:8]
+    return hashlib.md5(string.encode('utf-8')).hexdigest()[:8]

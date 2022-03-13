@@ -265,15 +265,15 @@ class ApiConfigRegistryTest(unittest.TestCase):
   def testApiMethodsMapped(self):
     self.registry.register_backend(
         {"methods": {"method1": {"rosyMethod": "foo"}}})
-    self.assertEquals('foo', self.registry.lookup_api_method('method1'))
+    self.assertEqual('foo', self.registry.lookup_api_method('method1'))
 
   def testAllApiConfigsWithTwoConfigs(self):
     config1 = {"methods": {"method1": {"rosyMethod": "c1.foo"}}}
     config2 = {"methods": {"method2": {"rosyMethod": "c2.bar"}}}
     self.registry.register_backend(config1)
     self.registry.register_backend(config2)
-    self.assertEquals('c1.foo', self.registry.lookup_api_method('method1'))
-    self.assertEquals('c2.bar', self.registry.lookup_api_method('method2'))
+    self.assertEqual('c1.foo', self.registry.lookup_api_method('method1'))
+    self.assertEqual('c2.bar', self.registry.lookup_api_method('method2'))
     self.assertItemsEqual([config1, config2], self.registry.all_api_configs())
 
   def testNoneApiConfigContent(self):
@@ -301,7 +301,7 @@ class ApiConfigRegistryTest(unittest.TestCase):
     self.registry.register_backend(config1)
     self.assertRaises(api_exceptions.ApiConfigurationError,
                       self.registry.register_backend, config2)
-    self.assertEquals('MyClass.Func1',
+    self.assertEqual('MyClass.Func1',
                       self.registry.lookup_api_method('method1'))
     self.assertIsNone(self.registry.lookup_api_method('method2'))
     self.assertEqual([config1], self.registry.all_api_configs())
@@ -312,9 +312,9 @@ class ApiConfigRegistryTest(unittest.TestCase):
                  "method1": {"rosyMethod": "MyClass.Func1"},
                  "method2": {"rosyMethod": "OtherClass.Func2"}}}
     self.registry.register_backend(config1)
-    self.assertEquals('MyClass.Func1',
+    self.assertEqual('MyClass.Func1',
                       self.registry.lookup_api_method('method1'))
-    self.assertEquals('OtherClass.Func2',
+    self.assertEqual('OtherClass.Func2',
                       self.registry.lookup_api_method('method2'))
     self.assertEqual([config1], self.registry.all_api_configs())
 

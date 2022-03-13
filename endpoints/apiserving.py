@@ -579,7 +579,7 @@ def api_server(api_services, **kwargs):
   # Determine the service name
   service_name = os.environ.get('ENDPOINTS_SERVICE_NAME')
   if not service_name:
-    _logger.warn('Did not specify the ENDPOINTS_SERVICE_NAME environment'
+    _logger.warning('Did not specify the ENDPOINTS_SERVICE_NAME environment'
                  ' variable so service control is disabled.  Please specify'
                  ' the name of service in ENDPOINTS_SERVICE_NAME to enable'
                  ' it.')
@@ -588,7 +588,7 @@ def api_server(api_services, **kwargs):
   # If we're using a local server, just return the dispatcher now to bypass
   # control client.
   if control_wsgi.running_on_devserver():
-    _logger.warn('Running on local devserver, so service control is disabled.')
+    _logger.warning('Running on local devserver, so service control is disabled.')
     return dispatcher
 
   from endpoints_management import _logger as management_logger

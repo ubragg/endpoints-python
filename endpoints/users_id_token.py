@@ -20,11 +20,13 @@ will be provided elsewhere in the future.
 """
 
 from __future__ import absolute_import
+import binascii
 
 from future import standard_library
 standard_library.install_aliases()
 from past.builtins import basestring
 import base64
+import codecs
 import hmac
 import json
 import logging
@@ -520,9 +522,8 @@ def _verify_parsed_token(parsed_token, issuers, audiences, allowed_client_ids, i
 def _urlsafe_b64decode(b64string):
   # Guard against unicode strings, which base64 can't handle.
   b64string = b64string.encode('ascii')
-  padded = b64string + '=' * ((4 - len(b64string)) % 4)
+  padded = b64string + ('=' * ((4 - len(b64string)) % 4)).encode('ascii')
   return base64.urlsafe_b64decode(padded)
-
 
 def _get_cert_expiration_time(headers):
   """Get the expiration time for a cert, given the response headers.
@@ -600,7 +601,7 @@ def _b64_to_long(b):
   b = b.encode('ascii')
   b += '=' * ((4 - len(b)) % 4)
   b = base64.b64decode(b)
-  return int(b.encode('hex'), 16)
+  return int(binascii.hexlify(b), 16)
 
 
 def _verify_signed_jwt_with_certs(
@@ -640,13 +641,14 @@ def _verify_signed_jwt_with_certs(
     # %r instead of %s, so that non-printable characters are escaped safely.
     raise _AppIdentityError('Token is not an id_token (Wrong number of '
                             'segments)')
+
   signed = '%s.%s' % (segments[0], segments[1])
 
   signature = _urlsafe_b64decode(segments[2])
 
   # pycrypto only deals in integers, so we have to convert the string of bytes
   # into a long.
-  lsignature = int(signature.encode('hex'), 16)
+  lsignature = int(binascii.hexlify(signature), 16)
 
   # Verify expected header.
   header_body = _urlsafe_b64decode(segments[0])
@@ -675,7 +677,7 @@ def _verify_signed_jwt_with_certs(
 
   # SHA256 hash of the already 'signed' segment from the JWT. Since a SHA256
   # hash, will always have length 64.
-  local_hash = SHA256.new(signed).hexdigest()
+  local_hash = SHA256.new(signed.encode('utf-8')).hexdigest()
 
   # Check signature.
   verified = False
@@ -800,7 +802,7 @@ def get_verified_jwt(
 def _parse_and_verify_jwt(token, time_now, issuers, audiences, cert_uri, cache):
   try:
     parsed_token = _verify_signed_jwt_with_certs(token, time_now, cache, cert_uri)
-  except (_AppIdentityError, TypeError) as e:
+  except (_AppIdentityError, TypeError, binascii.Error) as e:
     _logger.debug('id_token verification failed: %s', e)
     return None
 

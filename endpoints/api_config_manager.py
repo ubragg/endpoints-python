@@ -22,6 +22,7 @@ from future import standard_library
 standard_library.install_aliases()
 from builtins import object
 import base64
+import functools
 import logging
 import re
 import threading
@@ -151,7 +152,7 @@ class ApiConfigManager(object):
                           method_info2[1].get('httpMethod', ''))
       return method_result
 
-    return sorted(list(methods.items()), _sorted_methods_comparison)
+    return sorted(list(methods.items()), key=functools.cmp_to_key(_sorted_methods_comparison))
 
   @staticmethod
   def _get_path_params(match):
@@ -199,7 +200,7 @@ class ApiConfigManager(object):
           method_name, method = candidate_method_info
           break
       else:
-        _logger.warn('No endpoint found for path: %r, method: %r', path, http_method)
+        _logger.warning('No endpoint found for path: %r, method: %r', path, http_method)
         method_name = None
         method = None
         params = None
@@ -243,7 +244,7 @@ class ApiConfigManager(object):
     Returns:
       A string that's safe to be used as a regex group name.
     """
-    return '_' + base64.b32encode(matched_parameter).rstrip('=')
+    return '_' + base64.b32encode(matched_parameter.encode("utf-8")).decode("utf-8").rstrip('=')
 
   @staticmethod
   def _from_safe_path_param_name(safe_parameter):

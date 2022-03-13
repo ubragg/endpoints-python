@@ -824,7 +824,7 @@ class _ApiDecorator(object):
       A decorator function to decorate a class that implements an API.
     """
     if auth_level is not None:
-      _logger.warn(_AUTH_LEVEL_WARNING)
+      _logger.warning(_AUTH_LEVEL_WARNING)
 
     def apiserving_api_decorator(api_class):
       """Decorator for ProtoRPC class that configures Google's API server.
@@ -1065,7 +1065,7 @@ def api(name, version, description=None, hostname=None, audiences=None,
     Class decorated with api_info attribute, an instance of ApiInfo.
   """
   if auth_level is not None:
-    _logger.warn(_AUTH_LEVEL_WARNING)
+    _logger.warning(_AUTH_LEVEL_WARNING)
 
   return _ApiDecorator(name, version, description=description,
                        hostname=hostname, audiences=audiences, scopes=scopes,
@@ -1307,7 +1307,7 @@ def method(request_message=message_types.VoidMessage,
       proper subclasses of messages.Message.
   """
   if auth_level is not None:
-    _logger.warn(_AUTH_LEVEL_WARNING)
+    _logger.warning(_AUTH_LEVEL_WARNING)
 
   # Default HTTP method if one is not specified.
   DEFAULT_HTTP_METHOD = 'POST'

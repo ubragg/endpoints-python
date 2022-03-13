@@ -100,8 +100,8 @@ def _SetupPaths():
   # Add the path above this directory, so we can import the endpoints package
   # from the user's app code (rather than from another, possibly outdated SDK).
   # pylint: disable=g-import-not-at-top
-  from google.appengine.ext import vendor
-  vendor.add(os.path.dirname(os.path.dirname(__file__)))
+  #from google.appengine.ext import vendor
+  #vendor.add(os.path.dirname(os.path.dirname(__file__)))
 
 
 _SetupPaths()

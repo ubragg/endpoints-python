@@ -65,7 +65,7 @@ class MessageTypeToJsonSchemaTest(unittest.TestCase):
     parser = message_parser.MessageTypeToJsonSchema()
     parser.add_message(SelfReference)
     schemas = parser.schemas()
-    self.assertEquals(1, len(schemas))
+    self.assertEqual(1, len(schemas))
     self.assertTrue(package + 'SelfReference' in schemas)
 
   def testRecursiveDescent(self):
@@ -83,7 +83,7 @@ class MessageTypeToJsonSchemaTest(unittest.TestCase):
     parser = message_parser.MessageTypeToJsonSchema()
     parser.add_message(A)
     schemas = parser.schemas()
-    self.assertEquals(3, len(schemas))
+    self.assertEqual(3, len(schemas))
     self.assertTrue(package + 'A' in schemas)
     self.assertTrue(package + 'B' in schemas)
     self.assertTrue(package + 'C' in schemas)

@@ -19,9 +19,14 @@ from setuptools import setup, find_packages
 
 install_requires = [
     'attrs>=17.4.0',
-    'google-endpoints-api-management>=1.10.0',
+    'google-endpoints-api-management',
     'semver>=2.7.7',
     'setuptools>=36.2.5',
+    'future'
+]
+
+dependency_links=[
+    'git+git://github.com/ubragg/endpoints-management-python.git@119c1f1d9a79217194beb0685a5fd11008695c19#egg=google-endpoints-api-management',
 ]
 
 setup(
@@ -48,4 +53,5 @@ setup(
     scripts=['endpoints/endpointscfg.py'],
     tests_require=['mock', 'protobuf', 'protorpc', 'pytest', 'webtest'],
     install_requires=install_requires,
+    dependency_links=dependency_links,
 )

@@ -162,9 +162,9 @@ class ModuleInterfaceTest(object):
           # pylint: disable=protected-access
           if isinstance(attribute_value, __future__._Feature):
             continue
-          missing_attributes.append(attribute)
+          missing_attributes.append("%s:%s" % (attribute, attribute_value))
     if missing_attributes:
-      self.fail('%s are not modules and not defined in __all__.' %
+      self.fail('%s are not modules and not defined in __all__' %
                 missing_attributes)
 
   def testNoExportedProtectedVariables(self):
